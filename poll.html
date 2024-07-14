@@ -1,0 +1,77 @@
+<p id="poll-question">
+
+</p>
+<div id="poll-answers">
+
+</div>
+<div id="poll-result">
+
+</div>
+
+<script>
+    let currentQuestion = 0;
+    let currentScore = 0;
+    const pollConfig =
+        [
+            {
+                "question": "What is 10 + 20?",
+                "answers": [
+                    "30",
+                    "40",
+                    "50",
+                    "60"
+                ],
+                "correct": 0
+            },
+            {
+                "question": "What is 20 + 30?",
+                "answers": [
+                    "30",
+                    "40",
+                    "50",
+                    "60"
+                ],
+                "correct": 2
+            },
+            {
+                "question": "What is 1 + 1?",
+                "answers": [
+                    "2",
+                    "0",
+                    "7",
+                    "-9",
+                    "1"
+                ],
+                "correct": 0
+            }
+        ]
+
+    const renderQuestion = (questionIdx) => {
+        document.getElementById("poll-answers").innerHTML = "";
+        document.getElementById("poll-question").innerHTML = "";
+
+        if (questionIdx >= pollConfig.length) {
+            document.getElementById("poll-result").innerHTML = `You have scored ${currentScore} out of ${pollConfig.length}`;
+            return;
+        }
+
+        document.getElementById("poll-question").innerHTML = pollConfig[questionIdx].question;
+        pollConfig[questionIdx].answers.forEach((answer, idx) => {
+            const button = document.createElement("button");
+            button.innerHTML = answer;
+            button.onclick = () => checkAnswer(questionIdx, idx);
+            document.getElementById("poll-answers").appendChild(button);
+        })
+    }
+
+    const checkAnswer = (questionIdx, answerIdx) => {
+        if (pollConfig[questionIdx].correct === answerIdx) {
+            currentScore++;
+        }
+
+        currentQuestion++;
+        renderQuestion(currentQuestion);
+    }
+
+    renderQuestion(currentQuestion);
+</script>

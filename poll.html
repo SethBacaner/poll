@@ -1,13 +1,103 @@
-<p id="poll-question">
+<div id="poll-root"></div>
+<div class="poll">
+    <div class="poll-body">
+        <div class="poll-question" id="poll-question">
+        </div>
 
-</p>
-<div id="poll-answers">
+        <div class="poll-answers" id="poll-answers">
 
+        </div>
+    </div>
+
+    <div class="poll-explanation" id="poll-explanation">
+
+    </div>
+
+    <div id="poll-result" class="poll-result">
+
+    </div>
 </div>
-<div id="poll-result">
 
-</div>
+<style>
+.poll {
+    padding: 10px;
+    background-color: black;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
 
+.poll-body {
+    display: flex;
+    gap: 8px;
+}
+
+.poll-question {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.poll-question-text {
+    color: #dadada;
+}
+
+.poll-question-image {
+    width: 300px;
+    height: auto;
+}
+
+.poll-answers {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.poll-answer {
+    background-color: grey;
+    border: 1px solid white;
+    border-radius: 3px;
+    color: #d1d1d1;
+}
+
+.poll-answer:hover {
+    background-color: darkgray;
+    transition: background-color 0.3s ease;
+}
+
+.poll-answer:disabled:hover {
+    background-color: white;
+}
+
+.poll-explanation {
+    display: flex;
+    gap: 8px;
+}
+
+.poll-explanation-text {
+    color: #d1d1d1;
+}
+
+.next-question-button {
+    background-color: grey;
+    border: 1px solid white;
+    border-radius: 3px;
+    color: #d1d1d1;
+}
+
+.next-question-button:hover {
+    background-color: darkgrey;
+    transition: background-color 0.3s ease;
+}
+
+.poll-result {
+    color: #dadada;
+}
+</style>
+
+<script src="https://unpkg.com/react@15/dist/react.js"></script>
+<script src="https://unpkg.com/react-dom@15/dist/react-dom.js"></script>
 <script>
     let currentQuestion = 0;
     let currentScore = 0;
@@ -15,26 +105,31 @@
         [
             {
                 "question": "What is 10 + 20?",
+                "image": "https://images.ctfassets.net/sfnkq8lmu5d7/1NaIFGyBn0qwXYlNaCJSEl/ad59ce5eefa3c2322b696778185cc749/2021_0825_Kitten_Health.jpg?w=1000&h=750&fl=progressive&q=70&fm=jpg",
                 "answers": [
-                    "30",
+                    "30  hdhajsdhglkjd",
                     "40",
                     "50",
                     "60"
                 ],
+                "explanation": "It's simple math 0",
                 "correct": 0
             },
             {
                 "question": "What is 20 + 30?",
+                "image": "https://dogtime.com/wp-content/uploads/sites/12/2020/11/GettyImages-512366437-e1688677726208.jpg?w=1024",
                 "answers": [
                     "30",
                     "40",
                     "50",
                     "60"
                 ],
+                "explanation": "It's simple math 1",
                 "correct": 2
             },
             {
                 "question": "What is 1 + 1?",
+                "image": "https://www.vitalchoice.com/_next/image?url=https%3A%2F%2Fimages.contentstack.io%2Fv3%2Fassets%2Fbltcedd8dbd5891265b%2Fblt9e907fec66e00c8e%2F664cbd4ca235ff8947a345ae%2Fpink-salmon-hero.jpg&w=3840&q=75",
                 "answers": [
                     "2",
                     "0",
@@ -42,6 +137,7 @@
                     "-9",
                     "1"
                 ],
+                "explanation": "It's simple math 2",
                 "correct": 0
             }
         ]
@@ -55,10 +151,22 @@
             return;
         }
 
-        document.getElementById("poll-question").innerHTML = pollConfig[questionIdx].question;
+        const questionContainer = document.getElementById("poll-question");
+
+        const questionText = document.createElement("span");
+        questionText.className = "poll-question-text";
+        questionText.innerText = pollConfig[questionIdx].question;
+        questionContainer.appendChild(questionText);
+
+        const questionImage = document.createElement("img");
+        questionImage.className = "poll-question-image";
+        questionImage.src = pollConfig[questionIdx].image;
+        questionContainer.appendChild(questionImage);
+
         pollConfig[questionIdx].answers.forEach((answer, idx) => {
             const button = document.createElement("button");
-            button.innerHTML = answer;
+            button.innerText = answer;
+            button.className = "poll-answer"
             button.onclick = () => checkAnswer(questionIdx, idx);
             document.getElementById("poll-answers").appendChild(button);
         })
@@ -69,9 +177,49 @@
             currentScore++;
         }
 
+        const explanationContainer = document.getElementById("poll-explanation")
+
+        const explanationText = document.createElement("span")
+        explanationText.className = "poll-explanation-text"
+        explanationText.innerText = pollConfig[questionIdx].explanation;
+        explanationContainer.appendChild(explanationText)
+
+        const nextButton = document.createElement("button")
+        nextButton.onclick = () => onNextQuestion()
+        nextButton.className = "next-question-button"
+        nextButton.textContent = "Next"
+        explanationContainer.appendChild(nextButton)
+
+        const answers = document.getElementsByClassName("poll-answer");
+        for (const answer of answers) {
+            answer.disabled = true;
+        }
+    }
+
+    const onNextQuestion = () => {
         currentQuestion++;
         renderQuestion(currentQuestion);
+
+        explanationContainer = document.getElementById("poll-explanation")
+        explanationContainer.innerHTML = "";
     }
 
     renderQuestion(currentQuestion);
+
+    class Poll extends React.Component
+    {
+        constructor(props) {
+            super(props)
+        }
+
+        render()
+        {
+            return React.createElement('h1', null, 'Greetings, ' + this.props.name + '!');
+        }
+    }
+
+    ReactDOM.render(
+        React.createElement(Poll, { name : 'Chris' }),
+        document.getElementById('poll-root')
+    );
 </script>

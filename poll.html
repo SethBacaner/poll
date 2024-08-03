@@ -205,7 +205,6 @@
         }
 
         onAnswerSelected(answerIdx) {
-            console.log(answerIdx, " selected")
             this.setState(state => ({
                 score: pollConfig[currentQuestion].correct === answerIdx ? state.score + 1 : state.score,
                 answered: true,
@@ -231,8 +230,6 @@
                     )
                 );
             }
-
-            console.log(this.state.currentQuestion)
 
             const answers = this.props.config[this.state.currentQuestion].answers.map((answer, idx) => {
                 return React.createElement(

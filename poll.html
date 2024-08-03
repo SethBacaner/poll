@@ -1,13 +1,16 @@
 <div id="poll-root"></div>
 
+<link rel="stylesheet" href="https://use.typekit.net/vyr0lrw.css">
 <style>
 .poll {
     padding: 10px;
-    background-color: black;
     display: flex;
     flex-direction: column;
     gap: 8px;
     width: 300px;
+    font-family: adobe-garamond-pro;
+    border: 2px solid black;
+    border-radius: 5px;
 }
 
 .poll-question {
@@ -17,7 +20,7 @@
 }
 
 .poll-question-text {
-    color: #dadada;
+    text-align: center;
 }
 
 .poll-question-image {
@@ -32,38 +35,47 @@
 }
 
 .poll-answer {
-    background-color: grey;
-    border: 1px solid white;
+    border: 1px solid black;
     border-radius: 3px;
-    color: #d1d1d1;
+    font-family: adobe-garamond-pro;
+}
+
+.poll-answer:disabled {
+    color: black;
 }
 
 .poll-answer-correct {
     background-color: #299671;
 }
 
+.poll-answer-correct:hover:disabled {
+    background-color: #299671;
+    cursor: default;
+}
+
 .poll-answer-incorrect {
     background-color: #c97171;
 }
 
-.poll-answer:hover {
-    background-color: darkgray;
-    transition: background-color 0.3s ease;
+.poll-answer-incorrect:hover:disabled {
+    background-color: #c97171;
+    cursor: default;
 }
 
-.poll-answer:disabled:hover {
-    background-color: white;
+.poll-answer:hover {
+    background-color: darkgrey;
+    transition: background-color 0.3s ease;
+    cursor: pointer;
 }
 
 .poll-explanation {
-    color: #d1d1d1;
+    text-align: center;
 }
 
 .next-question-button {
-    background-color: grey;
-    border: 1px solid white;
     border-radius: 3px;
-    color: #d1d1d1;
+    font-family: adobe-garamond-pro;
+    cursor: pointer;
 }
 
 .next-question-button:hover {
@@ -71,8 +83,12 @@
     transition: background-color 0.3s ease;
 }
 
+.next-question-button:hover {
+    transition: background-color 0.3s ease;
+}
+
 .poll-result {
-    color: #dadada;
+    /* color: #dadada; */
 }
 </style>
 

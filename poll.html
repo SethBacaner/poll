@@ -107,6 +107,7 @@
 }
 
 .poll-result {
+    text-align: center;
 }
 </style>
 
@@ -157,9 +158,20 @@
             }
         ]
     // TODO: set scoring thresholds for displaying defined result messages
-    const scoringConfig = {
-
-    }
+    const scoringConfig = [
+        {
+            threshold: 1,
+            message: "Really not that great..."
+        },
+        {
+            threshold: 2,
+            message: "Getting better..."
+        },
+        {
+            threshold: 3,
+            message: "Excellent"
+        }
+    ]
 
     class PollAnswer extends React.Component {
         // answer
@@ -208,6 +220,26 @@
         }
     }
 
+    class PollResult extends React.Component {
+        // scoringConfig
+        // score
+        constructor(props) {
+            super(props)
+        }
+
+        render() {
+            const resultScore = this.props.scoringConfig.find(configEntry => {
+                return this.props.score <= configEntry.threshold
+            })
+
+            return React.createElement(
+                "div",
+                { className: "poll-result" },
+                resultScore.message
+            )
+        }
+    }
+
     class Poll extends React.Component {
         // config
         constructor(props) {
@@ -223,11 +255,12 @@
             this.onAnswerSelected = this.onAnswerSelected.bind(this)
             this.onNextQuestion = this.onNextQuestion.bind(this)
             this.onStartPoll = this.onStartPoll.bind(this)
+            this.onRestartPoll = this.onRestartPoll.bind(this)
         }
 
         onAnswerSelected(answerIdx) {
             this.setState(state => ({
-                score: pollConfig[currentQuestion].correct === answerIdx ? state.score + 1 : state.score,
+                score: pollConfig[state.currentQuestion].correct === answerIdx ? state.score + 1 : state.score,
                 answered: true,
             }))
         }
@@ -245,6 +278,14 @@
             }))
         }
 
+        onRestartPoll() {
+            this.setState(state => ({
+                answered: false,
+                currentQuestion: 0,
+                score: 0,
+            }))
+        }
+
         render() {
             if (!this.state.started) {
                 return React.createElement(
@@ -259,9 +300,13 @@
                     "div",
                     { className: "poll" },
                     React.createElement(
-                        "div",
-                        { className: "poll-result" },
-                        `You scored ${this.state.score} out of ${this.props.config.length}`
+                        PollResult,
+                        { score: this.state.score, scoringConfig: scoringConfig }
+                    ),
+                    React.createElement(
+                        "button",
+                        { className: "start-poll-button", onClick: this.onRestartPoll.bind(this) },
+                        "Restart"
                     )
                 );
             }

@@ -114,8 +114,6 @@
 <script src="https://unpkg.com/react@15/dist/react.js"></script>
 <script src="https://unpkg.com/react-dom@15/dist/react-dom.js"></script>
 <script>
-    let currentQuestion = 0;
-    let currentScore = 0;
     const startPollText = "Start the poll"
     const pollConfig =
         [
@@ -157,7 +155,6 @@
                 "correct": 0
             }
         ]
-    // TODO: set scoring thresholds for displaying defined result messages
     const scoringConfig = [
         {
             threshold: 1,
@@ -165,7 +162,7 @@
         },
         {
             threshold: 2,
-            message: "Getting better..."
+            message: "Almost..."
         },
         {
             threshold: 3,

@@ -18,6 +18,10 @@
     border-radius: 5px;
 }
 
+.poll-result {
+    align-items: center;
+}
+
 .poll-question {
     display: flex;
     flex-direction: column;
@@ -95,10 +99,21 @@
     transition: background-color 0.3s ease;
 }
 
+.start-poll-container {
+    font-family: adobe-garamond-pro;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    font-size: 20px;
+}
+
 .start-poll-button {
+    width: 50%;
     font-family: adobe-garamond-pro;
     background-color: white;
-    border: 1px solid black;
+    border: none;
+    border-bottom: 1px solid black;
     cursor: pointer;
     font-size: 22px;
 }
@@ -108,7 +123,7 @@
     transition: background-color 0.5s ease;
 }
 
-.poll-result {
+.poll-result-text {
     text-align: center;
     margin-bottom: 10px;
 }
@@ -248,7 +263,7 @@
 
             return React.createElement(
                 "div",
-                { className: "poll-result" },
+                { className: "poll-result-text" },
                 `You scored ${this.props.score} of ${this.props.maxPossibleScore}${resultSuffix}`
             )
         }
@@ -311,16 +326,25 @@
         render() {
             if (!this.state.started) {
                 return React.createElement(
-                    "button",
-                    { className: "start-poll-button", onClick: this.onStart.bind(this) },
-                    startPollText
+                    "div",
+                    { className: "start-poll-container" },
+                    React.createElement(
+                        "div",
+                        {},
+                        startPollText
+                    ),
+                    React.createElement(
+                        "button",
+                        { className: "start-poll-button", onClick: this.onStart.bind(this) },
+                        "Start the quiz"
+                    )
                 )
             }
 
             if (this.state.currentQuestion >= this.props.config.length) {
                 return React.createElement(
                     "div",
-                    { className: "poll" },
+                    { className: "poll poll-result" },
                     React.createElement(
                         PollResult,
                         {

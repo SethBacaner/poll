@@ -3,19 +3,22 @@
 
 <link rel="stylesheet" href="https://use.typekit.net/vyr0lrw.css">
 <style>
+
 #poll-root {
     display: flex;
     justify-content: center;
 }
 
-.poll {
+.poll-dialog {
     padding: 10px;
+    width: 90vw;
+}
+
+.poll {
     width: 100%;
     display: flex;
     flex-direction: column;
     font-family: adobe-garamond-pro;
-    border: 2px solid black;
-    border-radius: 5px;
 }
 
 .poll-result {
@@ -34,7 +37,8 @@
 }
 
 .poll-question-image {
-    height: auto;
+    height: 300px;
+    object-fit: contain;
 }
 
 .poll-answers {
@@ -289,6 +293,14 @@
             this.onStart = this.onStart.bind(this)
             this.onReset = this.onReset.bind(this)
             this.onRestart = this.onRestart.bind(this)
+
+            this.dialogRef = React.createRef();
+        }
+
+        componentDidMount() {
+            if (this.dialogRef.current) {
+                this.dialogRef.current.showModal();
+            }
         }
 
         onAnswerSelected(answerIdx) {
@@ -306,10 +318,21 @@
         }
 
         onStart() {
-            this.setState({ started: true })
+            if (this.dialogRef.current) {
+                this.dialogRef.current.showModal();
+            }
+
+            this.setState({
+                started: true
+            })
         }
 
         onReset() {
+            if (this.dialogRef.current) {
+
+                this.dialogRef.current.close();
+            }
+
             this.setState({
                 answered: false,
                 currentQuestion: 0,
@@ -327,22 +350,142 @@
         }
 
         render() {
+            let dialogContent;
             if (!this.state.started) {
-                return React.createElement(
+                dialogContent = React.createElement(
                     "div",
-                    { className: "start-poll-container" },
+                    {},
                     React.createElement(
                         "div",
-                        {},
-                        startPollText
+                        { className: "reset-button-container" },
+                        React.createElement(
+                            "button",
+                            { className: "reset-button", onClick: this.onReset.bind(this), title: "Reset" },
+                            "✖️"
+                        )
                     ),
                     React.createElement(
-                        "button",
-                        { className: "start-poll-button", onClick: this.onStart.bind(this) },
-                        "Start the quiz"
+                        "div",
+                        { className: "start-poll-container" },
+                        React.createElement(
+                            "div",
+                            {},
+                            startPollText
+                        ),
+                        React.createElement(
+                            "button",
+                            { className: "start-poll-button", onClick: this.onStart.bind(this) },
+                            "Start the quiz"
+                        ),
                     )
                 )
+            } else if (this.state.currentQuestion >= this.props.config.length) {
+                dialogContent = React.createElement(
+                    "div",
+                    {},
+                    React.createElement(
+                        "div",
+                        { className: "reset-button-container" },
+                        React.createElement(
+                            "button",
+                            { className: "reset-button", onClick: this.onReset.bind(this), title: "Reset" },
+                            "✖️"
+                        )
+                    ),
+                    React.createElement(
+                        "div",
+                        { className: "poll poll-result" },
+                        React.createElement(
+                            PollResult,
+                            {
+                                score: this.state.score,
+                                maxPossibleScore: this.props.config.length,
+                                scoringConfig: scoringConfig
+                            }
+                        ),
+                        React.createElement(
+                            "button",
+                            { className: "start-poll-button", onClick: this.onRestart.bind(this) },
+                            "Restart"
+                        )
+                    )
+                );
+            } else {
+                const answers = this.props.config[this.state.currentQuestion].answers.map((answer, idx) => {
+                    return React.createElement(
+                        PollAnswer,
+                        {
+                            key: idx,
+                            answer: answer,
+                            disabled: this.state.answered,
+                            correct: idx === this.props.config[this.state.currentQuestion].correct,
+                            onSelect: this.onAnswerSelected.bind(this, idx)
+                        }
+                    )
+                })
+
+                const explanation = this.state.answered ?
+                    React.createElement(
+                        "div",
+                        { className: "poll-explanation" },
+                        this.props.config[this.state.currentQuestion].explanation
+                    ) : null;
+
+                const nextButton = this.state.answered ?
+                    React.createElement(
+                        "button",
+                        { className: "next-question-button", onClick: this.onNextQuestion.bind(this) },
+                        "Next"
+                    ) : null;
+
+                dialogContent = React.createElement(
+                    "div",
+                    { className: "poll" },
+                    React.createElement(
+                        "div",
+                        { className: "reset-button-container" },
+                        React.createElement(
+                            "button",
+                            { className: "reset-button", onClick: this.onReset.bind(this), title: "Reset" },
+                            "✖️"
+                        )
+                    ),
+                    React.createElement(
+                        PollQuestion,
+                        {
+                            text: this.props.config[this.state.currentQuestion].question,
+                            image: this.props.config[this.state.currentQuestion].image
+                        }
+                    ),
+                    React.createElement(
+                        "div",
+                        { className: "poll-answers" },
+                        ...answers
+                    ),
+                    explanation,
+                    nextButton,
+                );
             }
+
+            return React.createElement(
+                "div",
+                { className: "start-poll-container" },
+                React.createElement(
+                    "div",
+                    {},
+                    startPollText
+                ),
+                React.createElement(
+                    "button",
+                    { className: "start-poll-button", onClick: this.onStart.bind(this) },
+                    "Start the quiz"
+                ),
+                React.createElement(
+                    "dialog",
+                    { ref: this.dialogRef, className: "poll-dialog" },
+                    dialogContent
+                )
+            )
 
             if (this.state.currentQuestion >= this.props.config.length) {
                 return React.createElement(

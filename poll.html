@@ -4,6 +4,10 @@
 <link rel="stylesheet" href="https://use.typekit.net/vyr0lrw.css">
 <style>
 
+body.no-scroll {
+    overflow: hidden;
+}
+
 #poll-root {
     display: flex;
     justify-content: center;
@@ -310,6 +314,7 @@
         componentDidMount() {
             if (this.dialogRef.current) {
                 this.dialogRef.current.showModal();
+                document.body.classList.add('no-scroll');
             }
         }
 
@@ -330,6 +335,7 @@
         onStart() {
             if (this.dialogRef.current) {
                 this.dialogRef.current.showModal();
+                document.body.classList.add('no-scroll');
             }
 
             this.setState({
@@ -339,8 +345,8 @@
 
         onReset() {
             if (this.dialogRef.current) {
-
                 this.dialogRef.current.close();
+                document.body.classList.remove('no-scroll');
             }
 
             this.setState({
